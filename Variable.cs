@@ -1,6 +1,7 @@
 ﻿namespace RetroNet {
 	public struct Variable {
-		public EToken etoken;
-		public String value;
+		public EToken type;
+		public String name;
+		public Object value;
 	}
 }

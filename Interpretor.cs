@@ -3,20 +3,21 @@
 namespace RetroNet {
 	public class Interpretor {
 		private List<Token> _tokens;
-		//Zmenic na liste typu Variable albo najlepiej jakis obiekt co ma getter i setter na liste i patrzec ile pamieci wpierdalamy.
-		private Dictionary<String, Object> _variables = new Dictionary<String, Object>();
+
+		private List<Variable> _variables = new List<Variable>();
 
 		public Interpretor(List<Token> tokens) {
 			this._tokens = tokens;
 		}
 
 		public void Interpret() {
+			Int32 index = 0;
 			foreach (Token token in this._tokens) {
 				if (Char.IsSymbol(token.token[0])) {
-					IEnumerable<MethodInfo> methods = typeof(Interpretor).GetMethods(BindingFlags.NonPublic| BindingFlags.Instance).Where(methodInfo => {
+					IEnumerable<MethodInfo> methods = typeof(Interpretor).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(methodInfo => {
 						//Chujowe rozwiazane poszukam lepszego jak wstan
 						if (methodInfo.CustomAttributes.Count() == 1) {
-							return methodInfo.GetCustomAttribute<MathOperationAttribute>().OperatorBinding == token.token[0];
+							return methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding == token.token[0];
 						}
 
 						return false;
@@ -24,15 +25,26 @@ namespace RetroNet {
 
 					//Wezwac z parametrami
 					methods.ElementAt(0).Invoke(this, new Object?[] {
+						index
 					});
 				}
+
+				index++;
 			}
 		}
 
-		//Dodac parametry
-		[MathOperation(OperatorBinding = '=')]
-		private void CreateVariable() {
-			Console.WriteLine("hello world");
+		[OperatorBinding(OperatorBinding = '=')]
+		private void CreateVariable(Int32 index) {
+			EToken type = this._tokens[index - 2].etoken;
+			String name = this._tokens[index - 1].token;
+			String value = this._tokens[index + 1].token;
+			//TODO: Poprawić kod w lekserze żeby automatycznie usuwał ";" i dodawał jako End of Line (EOL) do listy tokenów
+			value = value.Remove(value.Length - 1);
+			this._variables.Add(new Variable {
+				type = type,
+				name = name,
+				value = value
+			});
 		}
 	}
 }

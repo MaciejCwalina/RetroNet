@@ -18,7 +18,7 @@
 				throw new ArgumentException("TEnum must be an enumeration type.");
 			}
 
-			string enumName = Enum.GetNames(enumType)
+			string? enumName = Enum.GetNames(enumType)
 								  .FirstOrDefault(n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase));
 
 			if (enumName != null) {

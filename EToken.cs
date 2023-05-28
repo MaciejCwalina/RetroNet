@@ -4,6 +4,8 @@
 		PLUS,
 		MINUS,
 		I32,
+		F32,
+		STRING,
 		FN,
 		RETURN,
 		UNDEFINED,
