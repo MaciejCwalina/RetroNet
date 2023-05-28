@@ -18,6 +18,7 @@
 				throw new ArgumentException("TEnum must be an enumeration type.");
 			}
 
+		//Krzyczało tu coś o konwersji możliwego typu null na typ nienullowalny, dodałem ? do typu
 			string? enumName = Enum.GetNames(enumType)
 								  .FirstOrDefault(n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase));
 
