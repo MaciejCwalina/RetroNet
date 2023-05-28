@@ -1,6 +1,5 @@
 fn i32 main(){
     i32 variable = 10;
-    f32 variable2 = 4;
     return 0;
 }
 

@@ -12,7 +12,24 @@
 				foreach (String str in line.Split(' ')) {
 					Token token = this.DetermineToken(str);
 					if (token.etoken == EToken.UNDEFINED) {
-						tokens.Add(this.DetermineTokenLineByLine(str));
+						if (str.Contains(';')) {
+							tokens.Add(new Token {
+								etoken = EToken.UNDEFINED,
+								token = str.Replace(";", "")
+							});
+
+							tokens.Add(new Token {
+								etoken = EToken.EOL,
+								token = str[^1].ToString()
+							});
+
+							continue;
+						}
+
+						foreach (Token item in this.DetermineTokenLineByLine(str)) {
+							tokens.Add(item);
+						}
+
 						continue;
 					}
 
@@ -23,22 +40,28 @@
 			return tokens;
 		}
 
-		private Token DetermineTokenLineByLine(String token) {
+		private List<Token> DetermineTokenLineByLine(String token) {
 			String placeholder = String.Empty;
+			List<Token> tokens = new List<Token>();
 			foreach (Char c in token) {
 				placeholder += c;
 				if (EnumHelper.Contains<EToken>(placeholder)) {
-					return new Token {
+					tokens.Add(new Token {
 						token = placeholder,
 						etoken = this.DetermineToken(placeholder).etoken
-					};
+					});
+					placeholder = String.Empty;
+				}
+
+				if (placeholder.Length == token.Length) {
+					tokens.Add(new Token {
+						token = token,
+						etoken = EToken.UNDEFINED
+					});
 				}
 			}
 
-			return new Token {
-				token = token,
-				etoken = EToken.UNDEFINED
-			};
+			return tokens;
 		}
 
 		private Token DetermineToken(String token) {
