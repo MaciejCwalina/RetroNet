@@ -1,4 +1,7 @@
-﻿namespace RetroNet {
+﻿using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+
+namespace RetroNet {
 	public class Lexer {
 		private String[] _file;
 
@@ -8,32 +11,19 @@
 
 		public List<Token> Lex() {
 			List<Token> tokens = new List<Token>();
-			foreach (String line in this._file) {
-				foreach (String str in line.Split(' ')) {
-					Token token = this.DetermineToken(str);
-					if (token.etoken == EToken.UNDEFINED) {
-						if (str.Contains(';')) {
-							tokens.Add(new Token {
-								etoken = EToken.UNDEFINED,
-								token = str.Replace(";", "")
-							});
-
-							tokens.Add(new Token {
-								etoken = EToken.EOL,
-								token = str[^1].ToString()
-							});
-
-							continue;
-						}
-
-						foreach (Token item in this.DetermineTokenLineByLine(str)) {
-							tokens.Add(item);
-						}
-
+			foreach (string line in this._file) {
+				string placeholder = string.Empty;
+				foreach (char c in line) {
+					if (c == ' ' || DetermineToken(c.ToString()).etoken != EToken.UNDEFINED) {
+						Token token = this.DetermineToken(placeholder);
+						tokens.Add(token);
+						token = this.DetermineToken(c.ToString());
+						tokens.Add(token);
+						placeholder = string.Empty;
 						continue;
 					}
 
-					tokens.Add(token);
+					placeholder += c;
 				}
 			}
 
@@ -65,7 +55,7 @@
 		}
 
 		private Token DetermineToken(String token) {
-			if (String.IsNullOrEmpty(token)) {
+			if (token == "" || token == " ") {
 				return new Token {
 					token = "WHITESPACE",
 					etoken = EToken.WHITESPACE
@@ -115,6 +105,12 @@
 						return new Token {
 							token = "}",
 							etoken = EToken.RBRACE
+						};
+						break;
+					case ';':
+						return new Token {
+							token = ";",
+							etoken = EToken.EOL
 						};
 						break;
 				}

@@ -3,32 +3,29 @@
 namespace RetroNet {
 	public class Interpretor {
 		private List<Token> _tokens;
-
 		private List<Variable> _variables = new List<Variable>();
 
 		public Interpretor(List<Token> tokens) {
-			this._tokens = tokens;
+			this._tokens = this.SanitazeTokens(tokens);
+		}
+
+		private List<Token> SanitazeTokens(List<Token> tokens) {
+			List<Token> result = new List<Token>();
+			foreach (Token token in tokens) {
+				if (token.etoken == EToken.WHITESPACE) {
+					continue;
+				}
+
+				result.Add(token);
+			}
+
+			return result;
 		}
 
 		public void Interpret() {
 			Int32 index = 0;
 			foreach (Token token in this._tokens) {
-				if (Char.IsSymbol(token.token[0])) {
-					IEnumerable<MethodInfo> methods = typeof(Interpretor).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(methodInfo => {
-						//Chujowe rozwiazane poszukam lepszego jak wstane
-						//Nie chce mi sie szukac lepszego rozwiazania.
-						if (methodInfo.CustomAttributes.Count() == 1) {
-							return methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding == token.token[0];
-						}
-
-						return false;
-					});
-
-					methods.ElementAt(0).Invoke(this, new Object?[] {
-						index
-					});
-				}
-
+				//TODO: Dodac kontext eg czy jestesmy w danej funkcji itd itp
 				index++;
 			}
 		}
@@ -38,12 +35,16 @@ namespace RetroNet {
 			EToken type = this._tokens[index - 2].etoken;
 			String name = this._tokens[index - 1].token;
 			String value = this._tokens[index + 1].token;
-			//TODO: Poprawić kod w lekserze żeby automatycznie usuwał ";" i dodawał jako End of Line (EOL) do listy tokenów
 			this._variables.Add(new Variable {
 				type = type,
 				name = name,
 				value = value
 			});
+		}
+
+		[FunctionBinding(functionName = "PRINT")]
+		private void Print(int index) {
+			Console.WriteLine(this._variables.Where(variable => variable.name == this._tokens[index + 2].token).ElementAt(0).value);
 		}
 	}
 }

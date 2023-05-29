@@ -1,5 +1,8 @@
 fn i32 main(){
-    i32 variable = 10;
-    return 0;
+    i32 x = 10;
+    test(x);
 }
 
+fn i32 test(i32 a){
+    print(a);
+}

@@ -16,5 +16,6 @@
 		MAIN,
 		WHITESPACE,
 		EOL,
+		PRINT,
 	}
 }
