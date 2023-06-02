@@ -102,9 +102,15 @@ namespace RetroNet {
 		[OperatorBinding(OperatorBinding = '=')]
 		private void CreateVariable(Function function, Int32 index) {
 			//TODO: Re-write this shouldn't use indexing for determining the variable.
+			
 			EToken type = function.body[index - 2].etoken;
 			String name = function.body[index - 1].token;
 			String value = function.body[index + 1].token;
+			/* Got this ready to implement the new solution, gotta figure out what it is though.
+			EToken type = 
+			String name =
+			String value = 
+			*/
 			this._variables.Add(new Variable {
 				type = type,
 				name = name,
