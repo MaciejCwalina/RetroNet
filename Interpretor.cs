@@ -50,7 +50,7 @@ namespace RetroNet {
 				}
 
 				if (this._functions[0].body[i].etoken == EToken.PRINT) {
-					this.Print(this._functions[0].body, i);
+					this.Print(this._functions[0], i);
 				}
 
 				if (this.TryGetFunction(this._functions[0].body, i, out Function function)) {
@@ -88,7 +88,7 @@ namespace RetroNet {
 				}
 
 				if (token.etoken == EToken.PRINT) {
-					this.Print(function.body, index);
+					this.Print(function, index);
 				}
 
 				if (this.TryGetFunction(function.body, index, out Function func)) {
@@ -130,9 +130,9 @@ namespace RetroNet {
 			this._functions.Add(function);
 		}
 
-		private void Print(List<Token> bodyOfFunction, Int32 index) {
+		private void Print(Function function, Int32 index) {
 			//This is fucking trash re-write this.
-			Console.WriteLine(this._variables.Where(variable => variable.name == bodyOfFunction[index + 2].token).ElementAt(0).value);
+			Console.WriteLine(this._variables.Where(variable => variable.name == function.body[index + 2].token).ElementAt(0).value);
 		}
 	}
 }
