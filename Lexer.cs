@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-
-namespace RetroNet {
+﻿namespace RetroNet {
 	public class Lexer {
 		private String[] _file;
 
@@ -11,15 +8,15 @@ namespace RetroNet {
 
 		public List<Token> Lex() {
 			List<Token> tokens = new List<Token>();
-			foreach (string line in this._file) {
-				string placeholder = string.Empty;
-				foreach (char c in line) {
-					if (c == ' ' || DetermineToken(c.ToString()).etoken != EToken.UNDEFINED) {
+			foreach (String line in this._file) {
+				String placeholder = String.Empty;
+				foreach (Char c in line) {
+					if (c == ' ' || this.DetermineToken(c.ToString()).etoken != EToken.UNDEFINED) {
 						Token token = this.DetermineToken(placeholder);
 						tokens.Add(token);
 						token = this.DetermineToken(c.ToString());
 						tokens.Add(token);
-						placeholder = string.Empty;
+						placeholder = String.Empty;
 						continue;
 					}
 
