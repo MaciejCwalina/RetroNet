@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RetroNet {
 	public class Interpretor {
@@ -56,7 +57,7 @@ namespace RetroNet {
 				if (this.TryGetFunction(this._functions[0].body, i, out Function function)) {
 					this.RunFunction(function);
 				}
-			}
+            }
 		}
 
 		private Boolean TryGetFunction(List<Token> body, Int32 index, out Function function) {
@@ -94,23 +95,26 @@ namespace RetroNet {
 				if (this.TryGetFunction(function.body, index, out Function func)) {
 					this.RunFunction(func);
 				}
-
+				if (token.etoken == EToken.IF)
+				{
+					Console.WriteLine("This is an IF statement bitch we clown in this motherfucker, you better take your sensitive ass back to bit carry jumps");
+				}
 				index++;
 			}
 		}
+        /* 
+			private void runIfStatement(IfStatement statement) <- Can't resolve IfStatement struct type for some reason (Willfixlater)
+			{
 
-		[OperatorBinding(OperatorBinding = '=')]
+			}
+		*/
+        [OperatorBinding(OperatorBinding = '=')]
 		private void CreateVariable(Function function, Int32 index) {
-			//TODO: Re-write this shouldn't use indexing for determining the variable.
 			
 			EToken type = function.body[index - 2].etoken;
 			String name = function.body[index - 1].token;
 			String value = function.body[index + 1].token;
-			/* Got this ready to implement the new solution, gotta figure out what it is though.
-			EToken type = 
-			String name =
-			String value = 
-			*/
+
 			this._variables.Add(new Variable {
 				type = type,
 				name = name,
@@ -130,6 +134,7 @@ namespace RetroNet {
 			while (this._tokens[index].etoken != EToken.RBRACE) {
 				body.Add(this._tokens[index]);
 				index++;
+				//Check for code-block depth to keep the function from exiting too early. (Adds 1 depth point when '{' encountered.)
 			}
 
 			function.body = body;
