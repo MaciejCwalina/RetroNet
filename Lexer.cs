@@ -11,7 +11,7 @@
 			foreach (String line in this._file) {
 				String placeholder = String.Empty;
 				foreach (Char c in line) {
-					if (c == ' ' || this.DetermineToken(c.ToString()).etoken != EToken.UNDEFINED) {
+					if (c == ' ' || this.DetermineToken(c.ToString()).etoken != EToken.UNDEFINED || placeholder == ">=") {
 						Token token = this.DetermineToken(placeholder);
 						tokens.Add(token);
 						token = this.DetermineToken(c.ToString());
@@ -110,6 +110,12 @@
 							etoken = EToken.EOL
 						};
 						break;
+					case '"':
+						return new Token() {
+							token = '"'.ToString(),
+							etoken = EToken.QOUTE
+						};
+					break;
 				}
 			}
 

@@ -1,21 +1,8 @@
 fn i32 main(){
-    test();
-    i32 x = 20;
-    print(x);
+    i32 f = 10;
+    x(f);
 }
 
-
-fn i32 test(){
-    i32 a = 10;
-    g();
-    print(a);
-    i32 q = 432;
-    print(q)
-}
-
-fn i32 g(){
-    i32 k = 40;
+fn i32 x(i32 k){
     print(k);
 }
-
-

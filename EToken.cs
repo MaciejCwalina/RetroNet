@@ -1,5 +1,5 @@
 ﻿namespace RetroNet {
-	public enum EToken{
+	public enum EToken {
 		EQUALS,
 		PLUS,
 		MINUS,
@@ -17,5 +17,9 @@
 		WHITESPACE,
 		EOL,
 		PRINT,
+		IF,
+		QOUTE,
+		STRUCT,
+		NEW
 	}
 }
