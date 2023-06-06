@@ -53,6 +53,7 @@ namespace RetroNet {
 				}
 
 				if (this._functions[0].body[i].etoken == EToken.PRINT) {
+					this.Print(this._functions[0].localVariables.Where(x => x.name == this._functions[0].body[i + 2].token).ElementAt(0));
 				}
 
 				if (this.TryGetFunction(this._functions[0], i, out Function function)) {
@@ -107,7 +108,7 @@ namespace RetroNet {
 				}
 
 				if (token.etoken == EToken.PRINT) {
-					Print(function.localVariables.Where(x=>x.name == function.body[index+2].token).ElementAt(0));
+					this.Print(function.localVariables.Where(x => x.name == function.body[index + 2].token).ElementAt(0));
 				}
 
 				if (this.TryGetFunction(function, index, out Function func)) {
@@ -120,15 +121,25 @@ namespace RetroNet {
 
 		[OperatorBinding(OperatorBinding = '=')]
 		private void CreateVariable(ref Function function, Int32 index) {
-			EToken type = function.body[index - 2].etoken;
-			String name = function.body[index - 1].token;
-			String value = type == EToken.STRING ? function.body[index + 2].token : function.body[index + 1].token;
+			EToken type;
+			if (TypesHelper.IsType(function.body[index - 2].etoken)) {
+				type = function.body[index - 2].etoken;
+				String name = function.body[index - 1].token;
+				String value = type == EToken.STRING ? function.body[index + 2].token : function.body[index + 1].token;
 
-			function.localVariables.Add(new Variable {
-				type = type,
-				name = name,
-				value = value
-			});
+				function.localVariables.Add(new Variable {
+					type = type,
+					name = name,
+					value = value
+				});
+
+				return;
+			}
+
+			String token = function.body[index - 1].token;
+			type = function.body[index - 2].etoken;
+			function.localVariables[function.localVariables.IndexOf(function.localVariables.Where(x => x.name == token).ElementAt(0))].value =
+				type == EToken.STRING ? function.body[index + 2].token : function.body[index + 1].token;
 		}
 
 		private void CreateFunction(Int32 index) {

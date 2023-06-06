@@ -1,7 +1,8 @@
-﻿using RetroNet.Interfaces;
+﻿
+using RetroNet.Interfaces;
 
 namespace RetroNet {
-	public struct Parameter : IVariable {
+	public class Parameter : IVariable{
 		public Variable referenceVariable;
 
 		public EToken type { get; set; }

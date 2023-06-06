@@ -1,5 +1,5 @@
 ﻿namespace RetroNet {
-	public struct Token {
+	public class Token {
 		public EToken etoken;
 		public String token;
 	}

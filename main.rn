@@ -1,8 +1,6 @@
 fn i32 main(){
     i32 f = 10;
-    x(f);
-}
-
-fn i32 x(i32 k){
-    print(k);
+    print(f);
+    f = 32;
+    print(f);
 }
