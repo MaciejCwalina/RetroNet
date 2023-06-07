@@ -39,21 +39,22 @@ namespace RetroNet {
 		public void RunMainFunction() {
 			for (Int32 i = 0; i < this._functions[0].body.Count; i++) {
 				if (Char.IsSymbol(this._functions[0].body[i].token[0])) {
-					IEnumerable<MethodInfo> methods = typeof(Interpretor).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(methodInfo => {
-						if (methodInfo.CustomAttributes.Count() == 1) {
-							return methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding == this._functions[0].body[i].token[0];
-						}
+					IEnumerable<MethodInfo> methods = typeof(Interpretor)
+						.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(methodInfo => {
+							if (methodInfo.CustomAttributes.Count() == 1) {
+								return methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding ==
+									   this._functions[0].body[i].token[0];
+							}
 
-						return false;
-					});
+							return false;
+						});
 
-					methods.ElementAt(0).Invoke(this, new Object?[] {
-						this._functions[0], i
-					});
+					methods.ElementAt(0).Invoke(this, new Object?[] {this._functions[0], i});
 				}
 
 				if (this._functions[0].body[i].etoken == EToken.PRINT) {
-					this.Print(this._functions[0].localVariables.Where(x => x.name == this._functions[0].body[i + 2].token).ElementAt(0));
+					this.Print(this._functions[0].localVariables
+						.Where(x => x.name == this._functions[0].body[i + 2].token).ElementAt(0));
 				}
 
 				if (this.TryGetFunction(this._functions[0], i, out Function function)) {
@@ -62,9 +63,21 @@ namespace RetroNet {
 			}
 		}
 
+		private Boolean TryGetFunction(String name, out Function? function) {
+			try {
+				function = this._functions.Where(x => x.name == name).ElementAt(0);
+				return true;
+			}
+			catch {
+				function = null;
+				return false;
+			}
+		}
+
 		private Boolean TryGetFunction(Function functionCaller, Int32 index, out Function function) {
 			try {
-				function = this._functions.Where(function => function.name == functionCaller.body[index].token).ElementAt(0);
+				function = this._functions.Where(function => function.name == functionCaller.body[index].token)
+					.ElementAt(0);
 				index++;
 				Int32 paramIndex = 0;
 				for (Int32 i = index + 1; i < functionCaller.body.Count; i++) {
@@ -73,8 +86,8 @@ namespace RetroNet {
 					}
 
 					Parameter[] parameters = function.parameters.ToArray();
-					parameters[paramIndex].referenceVariable = (Variable)functionCaller.localVariables.Where(x => x.name == functionCaller.body[i].token)
-																					   .ElementAt(0);
+					parameters[paramIndex].referenceVariable = (Variable)functionCaller.localVariables
+						.Where(x => x.name == functionCaller.body[i].token).ElementAt(0);
 					foreach (Parameter parameter in parameters) {
 						function.localVariables.Add(parameter);
 					}
@@ -90,63 +103,93 @@ namespace RetroNet {
 			}
 		}
 
+
 		private void RunFunction(Function function) {
 			Int32 index = 0;
 			foreach (Token token in function.body) {
 				if (Char.IsSymbol(token.token[0])) {
-					IEnumerable<MethodInfo> methods = typeof(Interpretor).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(methodInfo => {
-						if (methodInfo.CustomAttributes.Count() == 1) {
-							return methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding == token.token[0];
-						}
+					IEnumerable<MethodInfo> methods = typeof(Interpretor)
+						.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(methodInfo => {
+							if (methodInfo.CustomAttributes.Count() == 1) {
+								return methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding ==
+									   token.token[0];
+							}
 
-						return false;
-					});
+							return false;
+						});
 
-					methods.ElementAt(0).Invoke(this, new Object[] {
-						function, index
-					});
+					methods.ElementAt(0).Invoke(this, new Object[] {function, index});
 				}
 
 				if (token.etoken == EToken.PRINT) {
-					this.Print(function.localVariables.Where(x => x.name == function.body[index + 2].token).ElementAt(0));
+					this.Print(
+						function.localVariables.Where(x => x.name == function.body[index + 2].token).ElementAt(0));
 				}
 
 				if (this.TryGetFunction(function, index, out Function func)) {
 					this.RunFunction(func);
 				}
 
+				if (token.etoken == EToken.RETURN) {
+					this.ReturnFromMethod(ref function, index);
+					return;
+				}
+
 				index++;
 			}
+		}
+
+		private void ReturnFromMethod(ref Function function, Int32 index) {
+			function.returnValue = function.body[index + 1].token;
+		}
+
+		private Boolean GetVariable(Function function, String name, out IVariable? variable) {
+			try {
+				if (function.localVariables.Count(x => x.name == name) > 0) {
+					variable = function.localVariables.Where(x => x.name == name).ElementAt(0);
+					return true;
+				}
+			}
+			catch {
+				variable = null;
+				return false;
+			}
+
+			variable = null;
+			return false;
 		}
 
 		[OperatorBinding(OperatorBinding = '=')]
 		private void CreateVariable(ref Function function, Int32 index) {
 			EToken type;
-			if (TypesHelper.IsType(function.body[index - 2].etoken)) {
-				type = function.body[index - 2].etoken;
-				String name = function.body[index - 1].token;
-				String value = type == EToken.STRING ? function.body[index + 2].token : function.body[index + 1].token;
+			if (!this.GetVariable(function, function.body[index - 1].token, out IVariable? variable)) {
+				String name = function.body[index + 1].token;
+				String value;
+				if (TryGetFunction(name, out Function refFunction)) {
+					value = refFunction.returnValue.ToString();
+				}
 
-				function.localVariables.Add(new Variable {
-					type = type,
-					name = name,
-					value = value
-				});
+				type = function.body[index - 2].etoken;
+				name = function.body[index - 1].token;
+				value = type == EToken.STRING ? function.body[index + 2].token : function.body[index + 1].token;
+
+				function.localVariables.Add(new Variable {type = type, name = name, value = value});
 
 				return;
 			}
 
+
 			String token = function.body[index - 1].token;
 			type = function.body[index - 2].etoken;
-			function.localVariables[function.localVariables.IndexOf(function.localVariables.Where(x => x.name == token).ElementAt(0))].value =
-				type == EToken.STRING ? function.body[index + 2].token : function.body[index + 1].token;
+			function.localVariables[
+					function.localVariables.IndexOf(function.localVariables.Where(x => x.name == token).ElementAt(0))]
+				.value = type == EToken.STRING ? function.body[index + 2].token : function.body[index + 1].token;
 		}
 
 		private void CreateFunction(Int32 index) {
 			index++;
 			Function function = new Function {
-				returnType = this._tokens[index].etoken,
-				name = this._tokens[index + 1].token
+				returnType = this._tokens[index].etoken, name = this._tokens[index + 1].token
 			};
 
 			Int32 secondIndex = index + 2;
@@ -154,8 +197,7 @@ namespace RetroNet {
 			while (this._tokens[secondIndex].etoken != EToken.RPAR) {
 				if (TypesHelper.IsType(this._tokens[secondIndex].etoken)) {
 					function.parameters.Add(new Parameter {
-						type = this._tokens[secondIndex].etoken,
-						name = this._tokens[secondIndex + 1].token
+						type = this._tokens[secondIndex].etoken, name = this._tokens[secondIndex + 1].token
 					});
 
 					secondIndex++;
@@ -176,17 +218,13 @@ namespace RetroNet {
 		}
 
 		private void CreateStruct(Int32 index) {
-			Struct RetroStruct = new Struct {
-				name = this._tokens[index + 1].token
-			};
+			Struct RetroStruct = new Struct {name = this._tokens[index + 1].token, body = new List<Variable>()};
 
-			RetroStruct.body = new List<Variable>();
 			index += 3;
 			while (this._tokens[index].etoken != EToken.RBRACE) {
 				if (TypesHelper.IsType(this._tokens[index].etoken)) {
 					RetroStruct.body.Add(new Variable {
-						type = this._tokens[index].etoken,
-						name = this._tokens[index + 1].token
+						type = this._tokens[index].etoken, name = this._tokens[index + 1].token
 					});
 
 					index++;

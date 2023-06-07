@@ -1,6 +1,8 @@
 fn i32 main(){
-    i32 f = 10;
-    print(f);
-    f = 32;
-    print(f);
+    i32 testVariable = 10;
+    test(testVariable);
+}
+
+fn i32 test(i32 x){
+    print(x);
 }

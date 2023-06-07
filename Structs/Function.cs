@@ -8,6 +8,7 @@ namespace RetroNet {
 		public List<Token> body;
 		public List<IVariable> localVariables = new List<IVariable>();
 		public List<Parameter> parameters;
+		public Object returnValue;
 		public Function() {
 		}
 	}
