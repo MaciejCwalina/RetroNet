@@ -9,6 +9,8 @@ namespace RetroNet {
 		public Interpretor(List<Token> tokens) {
 			this._tokens = tokens;
 			this._functionHandler = new FunctionHandler(this._tokens);
+			this._ifStatementHandler = new IfStatementHandler(this._tokens);
+			
 		}
 
 		public void LoadIntoMemory() {
@@ -16,11 +18,16 @@ namespace RetroNet {
 				if (this._tokens[i].etoken == EToken.FN) {
 					this._functionHandler.CreateFunction(i);
 				}
-
-				/*if (this._tokens[i].etoken == EToken.STRUCT) {
+				/*
+                if (this._tokens[i].etoken == EToken.IF) {
+                    this._ifStatementHandler.CreateIfStatement(i);
+                }
+				*/
+                /*if (this._tokens[i].etoken == EToken.STRUCT) {
 					this.CreateStruct(i);
 				}*/
-			}
+
+            }
 
 			this._functionHandler.RunMainFunction();
 		}

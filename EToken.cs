@@ -20,6 +20,11 @@
 		IF,
 		QOUTE,
 		STRUCT,
-		NEW
+		NEW,
+		COMPARE,
+		GREATER,
+		GREATEREQUAL,
+		LESS,
+		LESSEQUAL
 	}
 }
