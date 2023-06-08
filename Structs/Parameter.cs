@@ -7,9 +7,9 @@ namespace RetroNet {
 
 		public EToken type { get; set; }
 
-		public String name { get; set; }
+		public String? name { get; set; }
 
-		public Object value {
+		public Object? value {
 			get {
 				return this.referenceVariable.value;
 			}
