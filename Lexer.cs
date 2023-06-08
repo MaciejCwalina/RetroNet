@@ -11,7 +11,7 @@
 			foreach (String line in this._file) {
 				String placeholder = String.Empty;
 				foreach (Char c in line) {
-					if (c == ' ' || this.DetermineToken(c.ToString()).etoken != EToken.UNDEFINED || placeholder == ">=") {
+					if (c == ' ' || this.DetermineToken(c.ToString()).etoken != EToken.UNDEFINED) {
 						Token token = this.DetermineToken(placeholder);
 						tokens.Add(token);
 						token = this.DetermineToken(c.ToString());
@@ -59,7 +59,7 @@
 				};
 			}
 
-			token = token.ToUpper().Replace(" ", "");
+			token = token.Replace(" ", "");
 			if (Char.IsSymbol(token[0]) || Char.IsPunctuation(token[0])) {
 				switch (token[0]) {
 					case '=':
@@ -119,7 +119,7 @@
 				}
 			}
 
-			if (!Enum.IsDefined(typeof(EToken), token)) {
+			if (!Enum.IsDefined(typeof(EToken), token.ToUpper())) {
 				return new Token {
 					token = token,
 					etoken = EToken.UNDEFINED

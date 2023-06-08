@@ -22,7 +22,11 @@ namespace RetroNet {
 				}*/
 			}
 
-			this._functionHandler.RunMainFunction();
+			if (!this._functionHandler.TryGetFunction("main",out Function? func)) {
+				throw new Exception($"Function Main was NULL, please create a main function");
+			}
+
+			this._functionHandler.RunFunction(ref func!);
 		}
 
 		public static void Print(IVariable variable) {

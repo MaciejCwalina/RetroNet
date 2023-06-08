@@ -7,8 +7,6 @@ internal class Program {
 		List<Token> tokens = lexer.Lex();
 		Interpretor interpretor = new Interpretor(SanitazeTokens(tokens));
 		interpretor.LoadIntoMemory();
-
-
 	}
 
 	private static List<Token> SanitazeTokens(List<Token> tokens) {
