@@ -9,7 +9,7 @@ namespace RetroNet {
 		public Interpretor(List<Token> tokens) {
 			this._tokens = tokens;
 			this._functionHandler = new FunctionHandler(this._tokens);
-			this._ifStatementHandler = new IfStatementHandler(this._tokens);
+			//this._ifStatementHandler = new IfStatementHandler(this._tokens);
 			
 		}
 
