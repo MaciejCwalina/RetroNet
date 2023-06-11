@@ -25,11 +25,6 @@ namespace RetroNet.Handlers {
 			return this._structHandler.TryGetStruct(out RetroStruct placeHolder, name);
 		}
 
-		[OperatorBinding(OperatorBinding = '.')]
-		private void test(ref Function functionCaller, Int32 index, FunctionHandler handler) {
-			Console.WriteLine("called");
-		}
-
 		[OperatorBinding(OperatorBinding = '=')]
 		private void CreateVariable(ref Function functionCaller, Int32 index, FunctionHandler handler) {
 			if (functionCaller.body[index - 2].etoken == EToken.PERIOD) {
@@ -58,7 +53,6 @@ namespace RetroNet.Handlers {
 				}
 
 				variable.value = new List<Variable>(retroStruct.body);
-				Console.WriteLine(variable.AddressOfValue);
 				functionCaller.localVariables.Add(variable);
 				return;
 			}

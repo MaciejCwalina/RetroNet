@@ -1,21 +1,19 @@
+struct Person{
+    string name;
+    i32 age;
+}
+
 fn i32 main(){
-    test();
-    i32 x = 20;
-    print(x);
+    Person person = new Person();
+    Person person2 = new Person();
+    person.name = "Adasd";
+    person2.age = 24;
+    x(person person2);
 }
 
-
-fn i32 test(){
-    i32 a = 10;
-    g();
-    print(a);
-    i32 q = 432;
-    print(q)
+fn i32 x(Person p Person k){
+    print(p.name);
 }
 
-fn i32 g(){
-    i32 k = 40;
-    print(k);
-}
 
 

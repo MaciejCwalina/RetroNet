@@ -3,12 +3,6 @@ using RetroNet.Interfaces;
 
 namespace RetroNet {
 	public class Variable : IVariable {
-		public IntPtr AddressOfValue {
-			get {
-				return Marshal.GetIUnknownForObject(value);
-			}
-		}
-
 		public EToken type { get; set; }
 		public String? name { get; set; }
 		public Object? value { get; set; }
