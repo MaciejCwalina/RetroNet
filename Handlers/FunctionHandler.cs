@@ -70,8 +70,7 @@ namespace RetroNet.Handlers {
 
 						List<Variable> variables = (List<Variable>)variable.value;
 						functionCopy = function;
-						var w = variables.Where(x => x.name == functionCopy.body[index + 4].token).ElementAt(0);
-						Interpretor.Print(w);
+						Interpretor.Print(variables.Where(x => x.name == functionCopy.body[index + 4].token).ElementAt(0));
 
 						return;
 					}
