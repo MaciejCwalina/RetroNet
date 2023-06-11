@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
+using System.Runtime.InteropServices;
 using RetroNet.ExtensionMethods;
+using RetroNet.Interfaces;
 
 namespace RetroNet.Handlers {
 	public class FunctionHandler {
@@ -7,9 +9,9 @@ namespace RetroNet.Handlers {
 		private List<Token> _tokens;
 		private VariableHandler _variableHandler;
 
-		public FunctionHandler(List<Token> tokens) {
+		public FunctionHandler(List<Token> tokens, VariableHandler variableHandler) {
 			this._tokens = tokens;
-			this._variableHandler = new VariableHandler();
+			this._variableHandler = variableHandler;
 		}
 
 		public void CreateFunction(Int32 index) {
@@ -22,9 +24,10 @@ namespace RetroNet.Handlers {
 			Int32 secondIndex = index + 2;
 			function.parameters = new List<Parameter>();
 			while (this._tokens[secondIndex].etoken != EToken.RPAR) {
-				if (TypesHelper.IsType(this._tokens[secondIndex].etoken)) {
+				bool customType = false;
+				if (TypesHelper.IsType(this._tokens[secondIndex].etoken) || (customType = this._variableHandler.IsCustomType(this._tokens[secondIndex].token))) {
 					function.parameters.AddParameter(new Parameter {
-						type = this._tokens[secondIndex].etoken,
+						type = !customType ? this._tokens[secondIndex].etoken : EToken.CUSTOMTYPE,
 						name = this._tokens[secondIndex + 1].token
 					});
 
@@ -53,12 +56,29 @@ namespace RetroNet.Handlers {
 														  .Where(methodInfo => methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding ==
 																		       token.token[0]);
 
-					methods.ElementAt(0).Invoke(this._variableHandler, new Object[] {function, index,this});
+					methods.ElementAt(0).Invoke(this._variableHandler, new Object[] {
+						function, index, this
+					});
 				}
 
 				if (token.etoken == EToken.PRINT) {
-					Function? functionCopy = function;
-					Interpretor.Print(function.localVariables.Where(x => x.name == functionCopy.body[index + 2].token).ElementAt(0));
+					Function? functionCopy;
+					if (function.body[index + 3].etoken == EToken.PERIOD) {
+						if (!this._variableHandler.TryGetVariable(ref function, function.body[index + 2].token, out IVariable variable)) {
+							throw new Exception($"Variable: {function.body[index + 2].token}, doesnt exist");
+						}
+
+						List<Variable> variables = (List<Variable>)variable.value;
+						functionCopy = function;
+						Interpretor.Print(variables.Where(x => x.name == functionCopy.body[index + 4].token).ElementAt(0));
+
+					}
+					else {
+						functionCopy = function;
+						Interpretor.Print(function.localVariables.Where(x => x.name == functionCopy.body[index + 2].token).ElementAt(0));
+					}
+
+
 				}
 
 				if (this.TryGetFunction(function, index, out Function func)) {
@@ -76,15 +96,36 @@ namespace RetroNet.Handlers {
 
 		public Boolean TryGetFunction(Function functionCaller, Int32 index, out Function function) {
 			try {
-				function = this._functions.Where(function => function.name == functionCaller.body[index].token).ElementAt(0);
+				function = this._functions.Where(func => func.name == functionCaller.body[index].token).ElementAt(0);
 				index++;
 				Int32 paramIndex = 0;
 				for (Int32 i = index + 1; i < functionCaller.body.Count; i++) {
+					Parameter[] parameters;
+					if (functionCaller.body[index + 2].etoken == EToken.PERIOD) {
+						if (!this._variableHandler.TryGetVariable(ref functionCaller, functionCaller.body[index + 1].token, out IVariable variable)) {
+							throw new Exception("This does not exist");
+						}
+
+						List<Variable> arguments = (List<Variable>)variable.value;
+						parameters = function.parameters.ToArray();
+						foreach (Parameter parameter in parameters) {
+							parameter.referenceVariable = arguments.Where(x => x.name == functionCaller.body[index + 3].token).ElementAt(0);
+							index++;
+						}
+
+
+						foreach (Parameter parameter in parameters) {
+							function.localVariables.AddIVariable(parameter);
+						}
+
+						break;
+					}
+
 					if (functionCaller.body[i].etoken == EToken.RPAR) {
 						break;
 					}
 
-					Parameter[] parameters = function.parameters.ToArray();
+					parameters = function.parameters.ToArray();
 					parameters[paramIndex].referenceVariable = (Variable)functionCaller.localVariables
 																					   .Where(x => x.name == functionCaller.body[i].token).ElementAt(0);
 					foreach (Parameter parameter in parameters) {

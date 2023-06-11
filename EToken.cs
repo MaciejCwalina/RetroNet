@@ -19,6 +19,8 @@
 		PRINT,
 		IF,
 		QOUTE,
+		PERIOD,
+		CUSTOMTYPE,
 		STRUCT,
 		NEW,
 		COMPARE,

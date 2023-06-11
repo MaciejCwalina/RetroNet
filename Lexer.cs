@@ -115,6 +115,11 @@
 							token = '"'.ToString(),
 							etoken = EToken.QOUTE
 						};
+					case '.':
+						return new Token() {
+							token = ".",
+							etoken = EToken.PERIOD
+						};
 					break;
 				}
 			}

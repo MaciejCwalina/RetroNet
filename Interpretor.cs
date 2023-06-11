@@ -6,11 +6,16 @@ namespace RetroNet {
 	public class Interpretor {
 		private List<Token> _tokens;
 		private FunctionHandler _functionHandler;
+		private StructHandler _structHandler;
+		private VariableHandler _variableHandler;
 		public Interpretor(List<Token> tokens) {
+			VariableHandler variableHandler;
 			this._tokens = tokens;
-			this._functionHandler = new FunctionHandler(this._tokens);
+			this._structHandler = new StructHandler(tokens);
+			this._variableHandler = new VariableHandler(this._structHandler);
+			this._functionHandler = new FunctionHandler(this._tokens,this._variableHandler);
 			//this._ifStatementHandler = new IfStatementHandler(this._tokens);
-			
+
 		}
 
 		public void LoadIntoMemory() {
@@ -22,11 +27,11 @@ namespace RetroNet {
                 if (this._tokens[i].etoken == EToken.IF) {
                     this._ifStatementHandler.CreateIfStatement(i);
                 }
-				*/
-                /*if (this._tokens[i].etoken == EToken.STRUCT) {
-					this.CreateStruct(i);
-				}*/
 
+				*/
+                if (this._tokens[i].etoken == EToken.STRUCT) {
+					this._structHandler.CreateStruct(i);
+				}
             }
 
 			if (!this._functionHandler.TryGetFunction("main",out Function? func)) {

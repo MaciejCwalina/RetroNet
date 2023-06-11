@@ -1,12 +1,20 @@
-fn i32 main(){
-    i32 k = 10;
-    test(k);
+struct Person{
+    i32 age;
+    string name;
 }
 
-fn i32 test(i32 x){
-    print(x);
-    x = 32;
-    print(x);
+fn i32 main(){
+    Person person = new Person();
+    Person person2 = new Person();
+    person.age = 10;
+    person2.age = 32;
+    test(person person2);
+}
+
+fn i32 test(Person p Person k){
+    print(p.age);
+    print(k.age);
+    print(p.age);
 }
 
 
