@@ -27,30 +27,6 @@
 			return tokens;
 		}
 
-		private List<Token> DetermineTokenLineByLine(String token) {
-			String placeholder = String.Empty;
-			List<Token> tokens = new List<Token>();
-			foreach (Char c in token) {
-				placeholder += c;
-				if (EnumHelper.Contains<EToken>(placeholder)) {
-					tokens.Add(new Token {
-						token = placeholder,
-						etoken = this.DetermineToken(placeholder).etoken
-					});
-					placeholder = String.Empty;
-				}
-
-				if (placeholder.Length == token.Length) {
-					tokens.Add(new Token {
-						token = token,
-						etoken = EToken.UNDEFINED
-					});
-				}
-			}
-
-			return tokens;
-		}
-
 		private Token DetermineToken(String token) {
 			if (token == "" || token == " ") {
 				return new Token {
@@ -59,7 +35,7 @@
 				};
 			}
 
-			token = token.ToUpper().Replace(" ", "");
+			token = token.Replace(" ", "");
 			if (Char.IsSymbol(token[0]) || Char.IsPunctuation(token[0])) {
 				switch (token[0]) {
 					case '=':
@@ -110,11 +86,22 @@
 							etoken = EToken.EOL
 						};
 						break;
-					
+					case '"':
+						return new Token {
+							token = '"'.ToString(),
+							etoken = EToken.QOUTE
+						};
+						break;
+					case '.':
+						return new Token {
+							token = ".",
+							etoken = EToken.PERIOD
+						};
+						break;
 				}
 			}
 
-			if (!Enum.IsDefined(typeof(EToken), token)) {
+			if (!Enum.IsDefined(typeof(EToken), token.ToUpper())) {
 				return new Token {
 					token = token,
 					etoken = EToken.UNDEFINED

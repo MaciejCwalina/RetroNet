@@ -1,11 +1,29 @@
-﻿using RetroNet;
+﻿using System.Reflection;
+using RetroNet;
+using RetroNet.Handlers;
 
-class Program {
+struct MyStruct {
+	public int x;
+}
+
+internal class Program {
 	private static void Main() {
-		Lexer lexer = new Lexer(@"C:\Users\User\Desktop\Projekty\CS\main.rn");
+		Lexer lexer = new Lexer(@"C:\Users\user1\RiderProjects\RetroNet\RetroNet\main.rn");
 		List<Token> tokens = lexer.Lex();
-		Interpretor interpretor = new Interpretor(tokens);
-		interpretor.InitFunctionsList();
-		interpretor.RunMainFunction();
+		Interpretor interpretor = new Interpretor(SanitazeTokens(tokens));
+		interpretor.LoadIntoMemory();
+	}
+
+	private static List<Token> SanitazeTokens(List<Token> tokens) {
+		List<Token> result = new List<Token>();
+		foreach (Token token in tokens) {
+			if (token.etoken == EToken.WHITESPACE) {
+				continue;
+			}
+
+			result.Add(token);
+		}
+
+		return result;
 	}
 }

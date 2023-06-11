@@ -5,6 +5,7 @@
 				case EToken.STRING:
 				case EToken.I32:
 				case EToken.F32:
+				case EToken.CUSTOMTYPE:
 					return true;
 				default:
 					return false;
