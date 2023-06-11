@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Created by https://www.toptal.com/developers/gitignore/api/rider,csharp
+=======
+﻿# Created by https://www.toptal.com/developers/gitignore/api/rider,csharp
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 # Edit at https://www.toptal.com/developers/gitignore?templates=rider,csharp
 
 ### Csharp ###
@@ -479,4 +483,9 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # End of https://www.toptal.com/developers/gitignore/api/rider,csharp
+<<<<<<< HEAD
 *.rn
+=======
+*.dll
+*.dll
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9

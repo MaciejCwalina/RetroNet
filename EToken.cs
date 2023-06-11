@@ -1,5 +1,5 @@
 ﻿namespace RetroNet {
-	public enum EToken{
+	public enum EToken {
 		EQUALS,
 		PLUS,
 		MINUS,
@@ -18,6 +18,7 @@
 		EOL,
 		PRINT,
 		IF,
+<<<<<<< HEAD
 		ISEQUAL, //Comparison
 		GREATERTHAN,
 		QOUTE,
@@ -30,5 +31,15 @@
 		GREATEREQUAL,
 		LESSTHAN,
 		LESSEQUAL,
+=======
+		QOUTE,
+		STRUCT,
+		NEW,
+		COMPARE,
+		GREATER,
+		GREATEREQUAL,
+		LESS,
+		LESSEQUAL
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 	}
 }

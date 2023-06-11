@@ -1,7 +1,11 @@
 ﻿using System.Reflection;
+<<<<<<< HEAD
 using System.Runtime.InteropServices;
 using RetroNet.ExtensionMethods;
 using RetroNet.Interfaces;
+=======
+using RetroNet.ExtensionMethods;
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 
 namespace RetroNet.Handlers {
 	public class FunctionHandler {
@@ -9,9 +13,15 @@ namespace RetroNet.Handlers {
 		private List<Token> _tokens;
 		private VariableHandler _variableHandler;
 
+<<<<<<< HEAD
 		public FunctionHandler(List<Token> tokens, VariableHandler variableHandler) {
 			this._tokens = tokens;
 			this._variableHandler = variableHandler;
+=======
+		public FunctionHandler(List<Token> tokens) {
+			this._tokens = tokens;
+			this._variableHandler = new VariableHandler();
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 		}
 
 		public void CreateFunction(Int32 index) {
@@ -24,10 +34,16 @@ namespace RetroNet.Handlers {
 			Int32 secondIndex = index + 2;
 			function.parameters = new List<Parameter>();
 			while (this._tokens[secondIndex].etoken != EToken.RPAR) {
+<<<<<<< HEAD
 				bool customType = false;
 				if (TypesHelper.IsType(this._tokens[secondIndex].etoken) || (customType = this._variableHandler.IsCustomType(this._tokens[secondIndex].token))) {
 					function.parameters.AddParameter(new Parameter {
 						type = !customType ? this._tokens[secondIndex].etoken : EToken.CUSTOMTYPE,
+=======
+				if (TypesHelper.IsType(this._tokens[secondIndex].etoken)) {
+					function.parameters.AddParameter(new Parameter {
+						type = this._tokens[secondIndex].etoken,
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 						name = this._tokens[secondIndex + 1].token
 					});
 
@@ -56,6 +72,7 @@ namespace RetroNet.Handlers {
 														  .Where(methodInfo => methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding ==
 																		       token.token[0]);
 
+<<<<<<< HEAD
 					methods.ElementAt(0).Invoke(this._variableHandler, new Object[] {
 						function, index, this
 					});
@@ -77,6 +94,13 @@ namespace RetroNet.Handlers {
 
 					functionCopy = function;
 
+=======
+					methods.ElementAt(0).Invoke(this._variableHandler, new Object[] {function, index,this});
+				}
+
+				if (token.etoken == EToken.PRINT) {
+					Function? functionCopy = function;
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 					Interpretor.Print(function.localVariables.Where(x => x.name == functionCopy.body[index + 2].token).ElementAt(0));
 				}
 
@@ -95,6 +119,7 @@ namespace RetroNet.Handlers {
 
 		public Boolean TryGetFunction(Function functionCaller, Int32 index, out Function function) {
 			try {
+<<<<<<< HEAD
 				function = this._functions.Where(func => func.name == functionCaller.body[index].token).ElementAt(0);
 				index++;
 				Int32 paramIndex = 0;
@@ -120,11 +145,21 @@ namespace RetroNet.Handlers {
 						break;
 					}
 
+=======
+				function = this._functions.Where(function => function.name == functionCaller.body[index].token).ElementAt(0);
+				index++;
+				Int32 paramIndex = 0;
+				for (Int32 i = index + 1; i < functionCaller.body.Count; i++) {
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 					if (functionCaller.body[i].etoken == EToken.RPAR) {
 						break;
 					}
 
+<<<<<<< HEAD
 					parameters = function.parameters.ToArray();
+=======
+					Parameter[] parameters = function.parameters.ToArray();
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 					parameters[paramIndex].referenceVariable = (Variable)functionCaller.localVariables
 																					   .Where(x => x.name == functionCaller.body[i].token).ElementAt(0);
 					foreach (Parameter parameter in parameters) {

@@ -4,6 +4,7 @@ struct Person{
 }
 
 fn i32 main(){
+<<<<<<< HEAD
     Person person = new Person();
     Person person2 = new Person();
     person.name = "Adasd";
@@ -17,3 +18,16 @@ fn i32 x(Person p Person k){
 
 
 
+=======
+    i32 k = 10;
+    test(k);
+}
+
+fn i32 test(i32 x){
+    print(x);
+    x = 32;
+    print(x);
+}
+
+
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9

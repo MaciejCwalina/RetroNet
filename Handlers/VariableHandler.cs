@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 ﻿using System.Runtime.InteropServices;
 using RetroNet.ExtensionMethods;
+=======
+﻿using RetroNet.ExtensionMethods;
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 using RetroNet.Interfaces;
 
 namespace RetroNet.Handlers {
 	public class VariableHandler {
+<<<<<<< HEAD
 		private StructHandler _structHandler;
 
 		public VariableHandler(StructHandler structHandler) {
@@ -11,6 +16,9 @@ namespace RetroNet.Handlers {
 		}
 
 		public Boolean TryGetVariable(ref Function function, String? name, out IVariable? variable) {
+=======
+		public Boolean GetVariable(ref Function function, String? name, out IVariable? variable) {
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 			try {
 				variable = function.localVariables.Where(x => x.name == name).ElementAt(0);
 				return true;
@@ -21,6 +29,7 @@ namespace RetroNet.Handlers {
 			}
 		}
 
+<<<<<<< HEAD
 		public Boolean IsCustomType(String? name) {
 			return this._structHandler.TryGetStruct(out RetroStruct placeHolder, name);
 		}
@@ -57,6 +66,10 @@ namespace RetroNet.Handlers {
 				return;
 			}
 
+=======
+		[OperatorBinding(OperatorBinding = '=')]
+		private void CreateVariable(ref Function functionCaller, Int32 index, FunctionHandler handler) {
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 			EToken type = functionCaller.body[index - 2].etoken;
 			functionCaller.localVariables.AddIVariable(new Variable {
 				name = functionCaller.body[index - 1].token,
@@ -75,10 +88,17 @@ namespace RetroNet.Handlers {
 				return;
 			}
 
+<<<<<<< HEAD
 			if (this.TryGetVariable(ref functionCaller, functionCaller.body[index - 1].token, out IVariable? variableToAssign)) {
 				Int32 indexOf;
 				IVariable[] variables;
 				if (this.TryGetVariable(ref functionCaller, functionCaller.body[index + 1].token, out IVariable? variable)) {
+=======
+			if (this.GetVariable(ref functionCaller, functionCaller.body[index - 1].token, out IVariable? variableToAssign)) {
+				Int32 indexOf;
+				IVariable[] variables;
+				if (this.GetVariable(ref functionCaller, functionCaller.body[index + 1].token, out IVariable? variable)) {
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 					variables = functionCaller.localVariables.ToArray();
 					indexOf = Array.IndexOf(variables, variableToAssign);
 					variables[indexOf].value = variable.value;

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using RetroNet.Interfaces;
 
 namespace RetroNet.Handlers {
@@ -41,5 +42,10 @@ namespace RetroNet.Handlers {
 				return false;
 			}
 		}
+=======
+﻿namespace RetroNet.Handlers {
+	public class StructHandler {
+		//TODO: IMPLEMENT STRUCTS!!!!
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 	}
 }

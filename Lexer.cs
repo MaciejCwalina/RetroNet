@@ -87,6 +87,7 @@
 						};
 						break;
 					case '"':
+<<<<<<< HEAD
 						return new Token {
 							token = '"'.ToString(),
 							etoken = EToken.QOUTE
@@ -98,6 +99,13 @@
 							etoken = EToken.PERIOD
 						};
 						break;
+=======
+						return new Token() {
+							token = '"'.ToString(),
+							etoken = EToken.QOUTE
+						};
+					break;
+>>>>>>> c2a84940eb1105249054209cde8bbf55cc891ed9
 				}
 			}
 
