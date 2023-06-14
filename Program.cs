@@ -3,7 +3,7 @@ using RetroNet;
 
 internal class Program {
 	private static void Main() {
-		Lexer lexer = new Lexer(@"C:\Users\user1\RiderProjects\RetroNet\RetroNet\main.rn");
+		Lexer lexer = new Lexer(@"C:\Users\Windows\Documents\GitHub\RetroNet\main.rn");
 		List<Token> tokens = lexer.Lex();
 		Interpretor interpretor = new Interpretor(SanitazeTokens(tokens));
 		interpretor.LoadIntoMemory();

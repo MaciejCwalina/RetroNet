@@ -7,13 +7,14 @@ namespace RetroNet {
 		private List<Token> _tokens;
 		private FunctionHandler _functionHandler;
 		private StructHandler _structHandler;
+		private LoopHandler _loopHandler;
 		private VariableHandler _variableHandler;
 		public Interpretor(List<Token> tokens) {
-			VariableHandler variableHandler;
 			this._tokens = tokens;
 			this._structHandler = new StructHandler(tokens);
 			this._variableHandler = new VariableHandler(this._structHandler);
-			this._functionHandler = new FunctionHandler(this._tokens,this._variableHandler);
+			this._loopHandler = new LoopHandler(this._variableHandler, tokens);
+			this._functionHandler = new FunctionHandler(this._tokens,this._variableHandler,this._loopHandler);
 			//this._ifStatementHandler = new IfStatementHandler(this._tokens);
 
 		}
@@ -31,6 +32,10 @@ namespace RetroNet {
 				*/
                 if (this._tokens[i].etoken == EToken.STRUCT) {
 					this._structHandler.CreateStruct(i);
+				}
+
+				if (this._tokens[i].etoken == EToken.FOR || this._tokens[i].etoken == EToken.WHILE) {
+					this._loopHandler.CreateLoop(i);
 				}
             }
 

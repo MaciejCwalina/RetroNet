@@ -1,20 +1,10 @@
-struct Person{
-    i32 age;
-    string name;
-}
-
 fn i32 main(){
-    Person person = new Person();
-    Person person2 = new Person();
-    person.age = 10;
-    person2.age = 32;
-    test(person person2);
-}
+    i32 i = 0;
+    while(i < 10){
+        i++;
+    }
 
-fn i32 test(Person p Person k){
-    print(p.age);
-    print(k.age);
-    print(p.age);
+    i32 g = 10;
 }
 
 

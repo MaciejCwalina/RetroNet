@@ -8,14 +8,17 @@ namespace RetroNet.Handlers {
 		private List<Function> _functions = new List<Function>();
 		private List<Token> _tokens;
 		private VariableHandler _variableHandler;
-
-		public FunctionHandler(List<Token> tokens, VariableHandler variableHandler) {
+		private LoopHandler _loopHandler;
+		public FunctionHandler(List<Token> tokens, VariableHandler variableHandler, LoopHandler loopHandler) {
 			this._tokens = tokens;
 			this._variableHandler = variableHandler;
+			this._loopHandler = loopHandler;
 		}
 
 		public void CreateFunction(Int32 index) {
 			index++;
+			int lBraceCounter = 0;
+			int rBraceCounter = 0;
 			Function function = new Function {
 				returnType = this._tokens[index].etoken,
 				name = this._tokens[index + 1].token
@@ -37,21 +40,37 @@ namespace RetroNet.Handlers {
 				secondIndex++;
 			}
 
+			lBraceCounter++;
 			List<Token> body = new List<Token>();
 			index += 5;
-			while (this._tokens[index].etoken != EToken.RBRACE) {
+
+			while (true) {
+				if (this._tokens[index].etoken == EToken.LBRACE) {
+					lBraceCounter++;
+				}
+
+				if (this._tokens[index].etoken == EToken.RBRACE) {
+					rBraceCounter++;
+				}
+
+				if (lBraceCounter != 0 && rBraceCounter != 0) {
+					if ((lBraceCounter + rBraceCounter) % 2 == 0) {
+						function.body = body;
+						body.Add(this._tokens[index]);
+						this._functions.Add(function);
+						return;
+					}
+				}
+
 				body.Add(this._tokens[index]);
 				index++;
 			}
-
-			function.body = body;
-			this._functions.Add(function);
 		}
 
 		public void RunFunction(ref Function function) {
 			Int32 index = 0;
 			foreach (Token token in function.body) {
-				if (Char.IsSymbol(token.token[0])) {
+				if (Char.IsSymbol(token.token[0]) && token.token != "<") {
 					IEnumerable<MethodInfo> methods = this._variableHandler.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
 														  .Where(methodInfo => methodInfo.GetCustomAttribute<OperatorBindingAttribute>()?.OperatorBinding ==
 																		       token.token[0]);

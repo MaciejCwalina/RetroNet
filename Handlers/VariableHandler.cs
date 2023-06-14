@@ -1,10 +1,10 @@
-﻿﻿using System.Runtime.InteropServices;
-using RetroNet.ExtensionMethods;
+﻿using RetroNet.ExtensionMethods;
 using RetroNet.Interfaces;
 
 namespace RetroNet.Handlers {
 	public class VariableHandler {
 		private StructHandler _structHandler;
+		private Int32 callCounter;
 
 		public VariableHandler(StructHandler structHandler) {
 			this._structHandler = structHandler;
@@ -30,30 +30,47 @@ namespace RetroNet.Handlers {
 			Console.WriteLine("called");
 		}
 
+		[OperatorBinding(OperatorBinding = '+')]
+		private void EqualsBindingFunction(ref Function functionCaller, Int32 index, FunctionHandler handler) {
+			this.callCounter++;
+			if (this.callCounter == 2) {
+				if(!this.TryGetVariable(ref functionCaller, functionCaller.body[index - 2].token, out IVariable variable)) {
+					return;
+				}
+
+				int value = int.Parse(variable.value.ToString());
+				variable.value = ++value;
+			}
+		}
+
 		[OperatorBinding(OperatorBinding = '=')]
 		private void CreateVariable(ref Function functionCaller, Int32 index, FunctionHandler handler) {
 			if (functionCaller.body[index - 2].etoken == EToken.PERIOD) {
-				if (!this.TryGetVariable(ref functionCaller, functionCaller.body[index - 3].token, out IVariable structVariable)) {
-					throw new Exception($"Variable with the name {functionCaller.body[index - 3].token} does not exist");
+				if (!this.TryGetVariable(ref functionCaller, functionCaller.body[index - 3].token,
+						out IVariable structVariable)) {
+					throw new Exception(
+						$"Variable with the name {functionCaller.body[index - 3].token} does not exist");
 				}
 
 				List<Variable> variables = (List<Variable>)structVariable.value;
 				Function? caller = functionCaller;
 				Variable structProperty = variables.Where(x => x.name == caller.body[index - 1].token).ElementAt(0);
 				Variable variable = new Variable(structProperty);
-				int indexOf = variables.IndexOf(structProperty);
-				variable.value = variable.type == EToken.STRING ? functionCaller.body[index + 2].token : functionCaller.body[index + 1].token;
+				Int32 indexOf = variables.IndexOf(structProperty);
+				variable.value = variable.type == EToken.STRING ?
+					functionCaller.body[index + 2].token :
+					functionCaller.body[index + 1].token;
 				variables[indexOf] = variable;
 				return;
 			}
 
 			if (functionCaller.body[index + 1].etoken == EToken.NEW) {
 				Variable variable = new Variable {
-					name = functionCaller.body[index - 1].token,
-					type = EToken.CUSTOMTYPE
+					name = functionCaller.body[index - 1].token, type = EToken.CUSTOMTYPE
 				};
 
-				if (!this._structHandler.TryGetStruct(out RetroStruct retroStruct, functionCaller.body[index - 2].token)) {
+				if (!this._structHandler.TryGetStruct(out RetroStruct retroStruct,
+						functionCaller.body[index - 2].token)) {
 					throw new Exception($"Struct with the name {functionCaller.body[index - 1].token} does not exist");
 				}
 
@@ -66,24 +83,26 @@ namespace RetroNet.Handlers {
 			functionCaller.localVariables.AddIVariable(new Variable {
 				name = functionCaller.body[index - 1].token,
 				type = type,
-				value = type == EToken.STRING ? functionCaller.body[index + 2].token : functionCaller.body[index + 1].token
+				value = type == EToken.STRING ?
+					functionCaller.body[index + 2].token :
+					functionCaller.body[index + 1].token
 			});
 
 			if (handler.TryGetFunction(functionCaller.body[index + 1].token, out Function function)) {
 				handler.RunFunction(ref function);
 				functionCaller.localVariables.AddIVariable(new Variable {
-					name = functionCaller.body[index - 1].token,
-					type = type,
-					value = function.returnValue
+					name = functionCaller.body[index - 1].token, type = type, value = function.returnValue
 				});
 
 				return;
 			}
 
-			if (this.TryGetVariable(ref functionCaller, functionCaller.body[index - 1].token, out IVariable? variableToAssign)) {
+			if (this.TryGetVariable(ref functionCaller, functionCaller.body[index - 1].token,
+					out IVariable? variableToAssign)) {
 				Int32 indexOf;
 				IVariable[] variables;
-				if (this.TryGetVariable(ref functionCaller, functionCaller.body[index + 1].token, out IVariable? variable)) {
+				if (this.TryGetVariable(ref functionCaller, functionCaller.body[index + 1].token,
+						out IVariable? variable)) {
 					variables = functionCaller.localVariables.ToArray();
 					indexOf = Array.IndexOf(variables, variableToAssign);
 					variables[indexOf].value = variable.value;
@@ -93,8 +112,9 @@ namespace RetroNet.Handlers {
 
 				variables = functionCaller.localVariables.ToArray();
 				indexOf = Array.IndexOf(variables, variableToAssign);
-				variables[indexOf].value =
-					variables[indexOf].type == EToken.STRING ? functionCaller.body[index + 2].token : functionCaller.body[index + 1].token;
+				variables[indexOf].value = variables[indexOf].type == EToken.STRING ?
+					functionCaller.body[index + 2].token :
+					functionCaller.body[index + 1].token;
 				functionCaller.localVariables = variables.ToList();
 			}
 		}

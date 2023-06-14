@@ -13,6 +13,7 @@
 		RBRACE,
 		LPAR,
 		RPAR,
+		WHILE,
 		MAIN,
 		WHITESPACE,
 		EOL,
