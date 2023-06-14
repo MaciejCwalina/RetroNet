@@ -34,7 +34,7 @@ namespace RetroNet {
 					this._structHandler.CreateStruct(i);
 				}
 
-				if (this._tokens[i].etoken == EToken.FOR || this._tokens[i].etoken == EToken.WHILE) {
+				if (this._tokens[i].etoken == EToken.WHILE) {
 					this._loopHandler.CreateLoop(i);
 				}
             }
