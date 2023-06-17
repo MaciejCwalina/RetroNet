@@ -1,24 +1,14 @@
-﻿using System.Reflection;
+﻿using System.Reflection.Metadata;
 using RetroNet;
 
 internal class Program {
 	private static void Main() {
-		Lexer lexer = new Lexer(@"C:\Users\Windows\Documents\GitHub\RetroNet\main.rn");
-		List<Token> tokens = lexer.Lex();
-		Interpretor interpretor = new Interpretor(SanitazeTokens(tokens));
-		interpretor.LoadIntoMemory();
-	}
-
-	private static List<Token> SanitazeTokens(List<Token> tokens) {
-		List<Token> result = new List<Token>();
-		foreach (Token token in tokens) {
-			if (token.etoken == EToken.WHITESPACE) {
-				continue;
+		Lexer lexer = new Lexer("../../../main.rn");
+		List<Token> tokens = lexer.Tokenize();
+		for (int i = 0; i < tokens.Count; i++) {
+			if (tokens[i].etoken == EToken.FN) {
+				
 			}
-
-			result.Add(token);
 		}
-
-		return result;
 	}
 }

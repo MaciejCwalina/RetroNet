@@ -1,17 +1,30 @@
 ﻿namespace RetroNet {
 	public class Lexer {
 		private String[] _file;
+		private HashSet<String> _namesOfStructs = new HashSet<String>();
 
 		public Lexer(String pathToFile) {
 			this._file = File.ReadAllLines(pathToFile);
 		}
 
-		public List<Token> Lex() {
+		private static List<Token> SanitazeTokens(List<Token> tokens) {
+			List<Token> result = new List<Token>();
+			foreach (Token token in tokens) {
+				if (token.etoken == EToken.WHITESPACE) {
+					continue;
+				}
+
+				result.Add(token);
+			}
+
+			return result;
+		}
+
+		public List<Token> Tokenize() {
 			List<Token> tokens = new List<Token>();
 			foreach (String line in this._file) {
 				String placeholder = String.Empty;
-				for (Int32 i = 0; i < line.Length; i++) {
-					Char c = line[i];
+				foreach (Char c in line) {
 					if (c == ' ' || this.DetermineToken(c.ToString()).etoken != EToken.UNDEFINED) {
 						Token token = this.DetermineToken(placeholder);
 						tokens.Add(token);
@@ -25,58 +38,100 @@
 				}
 			}
 
+			tokens = SanitazeTokens(tokens);
 			return tokens;
 		}
 
 		private Token DetermineToken(String token) {
-			if (token == "" || token == " ") {
-				return new Token {token = "WHITESPACE", etoken = EToken.WHITESPACE};
+			if (token is "" or " ") {
+				return new Token {
+					token = "WHITESPACE",
+					etoken = EToken.WHITESPACE
+				};
 			}
 
 			token = token.Replace(" ", "");
 
-			if (Char.IsSymbol(token[0]) || Char.IsPunctuation(token[0])) {
-				switch (token[0]) {
-					case '=':
-						return new Token {token = "=", etoken = EToken.EQUALS};
-						break;
-					case '-':
-						return new Token {token = "-", etoken = EToken.MINUS};
-						break;
-					case '+':
-						return new Token {token = "+", etoken = EToken.PLUS};
-						break;
-					case '(':
-						return new Token {token = "(", etoken = EToken.LPAR};
-						break;
-					case ')':
-						return new Token {token = ")", etoken = EToken.RPAR};
-						break;
-					case '{':
-						return new Token {token = "{", etoken = EToken.LBRACE};
-						break;
-					case '}':
-						return new Token {token = "}", etoken = EToken.RBRACE};
-						break;
-					case ';':
-						return new Token {token = ";", etoken = EToken.EOL};
-						break;
-					case '"':
-						return new Token {token = '"'.ToString(), etoken = EToken.QOUTE};
-					case '.':
-						return new Token {token = ".", etoken = EToken.PERIOD};
-						break;
-					case '<':
-						return new Token {token = "<", etoken = EToken.LESS};
-					break;
-				}
+			Token? tkn = this.IsRegisteredCharacter(token[0]);
+			if (tkn != null) {
+				return tkn.Value;
 			}
 
 			if (!Enum.IsDefined(typeof(EToken), token.ToUpper())) {
-				return new Token {token = token, etoken = EToken.UNDEFINED};
+				return new Token {
+					token = token,
+					etoken = EToken.UNDEFINED
+				};
 			}
 
-			return new Token {token = token, etoken = EnumHelper.GetEnumValueByName<EToken>(token)};
+			return new Token {
+				token = token,
+				etoken = EnumHelper.GetEnumValueByName<EToken>(token)
+			};
+		}
+
+		private Token? IsRegisteredCharacter(Char reg) {
+			if (Char.IsSymbol(reg) || Char.IsPunctuation(reg)) {
+				switch (reg) {
+					case '=':
+						return new Token {
+							token = "=",
+							etoken = EToken.EQUALS
+						};
+					case '-':
+						return new Token {
+							token = "-",
+							etoken = EToken.MINUS
+						};
+					case '+':
+						return new Token {
+							token = "+",
+							etoken = EToken.PLUS
+						};
+					case '(':
+						return new Token {
+							token = "(",
+							etoken = EToken.LPAR
+						};
+					case ')':
+						return new Token {
+							token = ")",
+							etoken = EToken.RPAR
+						};
+					case '{':
+						return new Token {
+							token = "{",
+							etoken = EToken.LBRACE
+						};
+					case '}':
+						return new Token {
+							token = "}",
+							etoken = EToken.RBRACE
+						};
+					case ';':
+						return new Token {
+							token = ";",
+							etoken = EToken.EOL
+						};
+					case '"':
+						return new Token {
+							token = '"'.ToString(),
+							etoken = EToken.QOUTE
+						};
+					case '.':
+						return new Token {
+							token = ".",
+							etoken = EToken.PERIOD
+						};
+					case '<':
+						return new Token {
+							token = "<",
+							etoken = EToken.LESS
+						};
+				}
+			}
+
+			return null;
 		}
 	}
 }
