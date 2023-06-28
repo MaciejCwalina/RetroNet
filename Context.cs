@@ -1,8 +1,8 @@
 namespace RetroNet {
-	public abstract  class Context {
-		protected FileStream _fileStream;
-		public Context(FileStream fileStream) {
-			this._fileStream = fileStream;
+	public abstract class Context {
+		protected StreamWriter _streamWriter;
+		public Context(StreamWriter streamWriter) {
+			this._streamWriter = streamWriter;
 		}
 
 		public abstract void ConvertIntoByteCode();

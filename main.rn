@@ -1,3 +1,8 @@
 fn i32 main(){
     i32 x = 10;
+    testFunc();
+}
+
+fn i32 testFunc(){
+    i32 k = 43;
 }
